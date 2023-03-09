@@ -33,8 +33,15 @@
 			<Add option="-fexceptions" />
 			<Add directory="include" />
 		</Compiler>
+		<Unit filename="include/SLAE_solver.h" />
+		<Unit filename="include/SNAE_solver.h" />
+		<Unit filename="include/jacobian.h" />
 		<Unit filename="include/one_step_ODE_solver.h" />
+		<Unit filename="include/operations.h" />
 		<Unit filename="main.cpp" />
+		<Unit filename="src/SLAE_solver.cpp" />
+		<Unit filename="src/SNAE_solver.cpp" />
+		<Unit filename="src/jacobian.cpp" />
 		<Unit filename="src/one_step_ODE_solver.cpp" />
 		<Extensions>
 			<code_completion />

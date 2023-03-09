@@ -1,0 +1,58 @@
+# depslib dependency file v1.0
+1677986800 source:d:\omsu\programming\emp\one_step_ode_solver\src\functor.cpp
+	"functor.h"
+
+1678080277 d:\omsu\programming\emp\one_step_ode_solver\include\functor.h
+	<functional>
+	<vector>
+	<set>
+
+1678334379 source:d:\omsu\programming\emp\one_step_ode_solver\src\one_step_ode_solver.cpp
+	"one_step_ODE_solver.h"
+
+1678334329 d:\omsu\programming\emp\one_step_ode_solver\include\one_step_ode_solver.h
+	<complex>
+	<functional>
+	<iostream>
+	"jacobian.h"
+	"operations.h"
+	<vector>
+	"SNAE_solver.h"
+	"SLAE_solver.h"
+	<utility>
+
+1678334920 source:d:\omsu\programming\emp\one_step_ode_solver\main.cpp
+	"one_step_ODE_solver.h"
+	<iostream>
+	<functional>
+	<vector>
+	<set>
+	<utility>
+
+1678260887 d:\omsu\programming\emp\one_step_ode_solver\include\snae_solver.h
+	<functional>
+	<vector>
+
+1678098683 source:d:\omsu\programming\emp\one_step_ode_solver\src\snae_solver.cpp
+	"SNAE_solver.h"
+
+1678331742 d:\omsu\programming\emp\one_step_ode_solver\include\operations.h
+	<complex>
+	<vector>
+
+1678100646 source:d:\omsu\programming\emp\one_step_ode_solver\src\operations.cpp
+	"operations.h"
+
+1678331742 d:\omsu\programming\emp\one_step_ode_solver\include\slae_solver.h
+	<vector>
+
+1678331742 source:d:\omsu\programming\emp\one_step_ode_solver\src\slae_solver.cpp
+	"SLAE_solver.h"
+
+1678296698 source:d:\omsu\programming\emp\one_step_ode_solver\src\jacobian.cpp
+	"jacobian.h"
+
+1678334805 d:\omsu\programming\emp\one_step_ode_solver\include\jacobian.h
+	<functional>
+	<vector>
+
