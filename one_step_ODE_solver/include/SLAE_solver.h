@@ -19,6 +19,11 @@ public:
         A_{A}, b_{b}
     {}
 
+    SLAE_solver_representation() = default;
+
+    void initialize(const slae::real_matr_t& A, const slae::real_vec_t& b)
+    { A_ = A; b_ = b; };
+
     virtual slae::real_vec_t get_solution() const = 0;
 
     virtual ~SLAE_solver_representation() noexcept {};
@@ -45,7 +50,11 @@ public:
         repr_ptr{new SLAE_SOLVER{A, b}}
     {}
 
-    SLAE_solver_representation* repr_ptr;
+    SLAE_solver() :
+        repr_ptr{new SLAE_SOLVER}
+    {}
+
+    SLAE_solver_representation* repr_ptr = nullptr;
 
     ~SLAE_solver() noexcept;
 };

@@ -70,10 +70,11 @@ class One_step_ODE_solver_repr
 {
 public:
     One_step_ODE_solver_repr(const svr::system_t& F, svr::domain_t domain, const svr::real_vec_t& u0) :
-        F_{F}, domain_{domain}, u0_{u0}, jacobian_ptr_{new Jacobian{F}}
+        F_{F}, domain_{domain}, u0_{u0}, SLAE_solver_ptr_{new SLAE_solver},
+        SNAE_solver_ptr_{new SNAE_solver}, jacobian_ptr_{new Jacobian{F}}
     {}
 
-    virtual svr::real_matr_t get_solution() = 0;
+    virtual svr::real_matr_t get_solution() const = 0;
     virtual ~One_step_ODE_solver_repr() noexcept;
 protected:
     svr::system_t F_;
@@ -91,7 +92,7 @@ class Runge_Kutta_solver : public One_step_ODE_solver_repr
 public:
     Runge_Kutta_solver(const svr::system_t& F, svr::domain_t domain, const svr::real_vec_t& u0);
 
-    virtual svr::real_matr_t get_solution() override;
+    virtual svr::real_matr_t get_solution() const override;
     virtual ~Runge_Kutta_solver() noexcept override {};
 };
 
@@ -101,7 +102,7 @@ class Rosenbrock_one_stage_solver : public One_step_ODE_solver_repr
 public:
     Rosenbrock_one_stage_solver(const svr::system_t& F, svr::domain_t domain, const svr::real_vec_t& u0);
 
-    virtual svr::real_matr_t get_solution() override;
+    virtual svr::real_matr_t get_solution() const override;
     virtual ~Rosenbrock_one_stage_solver() noexcept override {};
 };
 
@@ -111,7 +112,7 @@ class Rosenbrock_two_stage_solver : public One_step_ODE_solver_repr
 public:
     Rosenbrock_two_stage_solver(const svr::system_t& F, svr::domain_t domain, const svr::real_vec_t& u0);
 
-    virtual svr::real_matr_t get_solution() override;
+    virtual svr::real_matr_t get_solution() const override;
     virtual ~Rosenbrock_two_stage_solver() noexcept override {};
 };
 
@@ -123,7 +124,7 @@ public:
         repr_ptr{new ODE_SOLVER{F, domain, u0}}
     {}
 
-    One_step_ODE_solver_repr* repr_ptr;
+    One_step_ODE_solver_repr* repr_ptr = nullptr;
 
     ~One_step_ODE_solver() noexcept;
 };

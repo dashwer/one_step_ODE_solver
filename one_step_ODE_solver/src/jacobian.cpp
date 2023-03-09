@@ -2,6 +2,8 @@
 
 Jacobian::~Jacobian()
 {
-    delete repr_ptr;
-    repr_ptr = nullptr;
+    if (repr_ptr != nullptr) {
+        delete repr_ptr;
+        repr_ptr = nullptr;
+    }
 }

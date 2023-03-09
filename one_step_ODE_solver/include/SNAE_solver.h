@@ -2,6 +2,7 @@
 #define SNAE_SOLVER_H_INCLUDED
 
 #include <functional>
+#include <iostream>
 #include <vector>
 
 #define SNAE_SOLVER Newton_solver
@@ -22,7 +23,10 @@ public:
         f_{f}
     {}
 
-    virtual snae::real_vec_t get_solution() = 0;
+    SNAE_solver_representation() = default;
+
+    void initialize(const snae::system_t& f) { f_ = f; };
+    virtual snae::real_vec_t get_solution() const = 0;
     virtual ~SNAE_solver_representation() noexcept {};
 
 protected:
@@ -35,7 +39,7 @@ class FPI_solver : public SNAE_solver_representation
 public:
     using SNAE_solver_representation::SNAE_solver_representation;
 
-    virtual snae::real_vec_t get_solution() override { return snae::real_vec_t{0.0}; };
+    virtual snae::real_vec_t get_solution() const override { return snae::real_vec_t{0.0}; };
 
     virtual ~FPI_solver() noexcept override {};
 };
@@ -46,7 +50,7 @@ class Newton_solver : public SNAE_solver_representation
 public:
     using SNAE_solver_representation::SNAE_solver_representation;
 
-    virtual snae::real_vec_t get_solution() override
+    virtual snae::real_vec_t get_solution() const override
     {
         snae::real_vec_t vec;
         vec.resize(f_.size(), 0.0);
@@ -62,6 +66,10 @@ class SNAE_solver
 public:
     SNAE_solver(const snae::system_t& f) :
         repr_ptr{new SNAE_SOLVER{f}}
+    {}
+
+    SNAE_solver() :
+        repr_ptr{new SNAE_SOLVER}
     {}
 
     SNAE_solver_representation* repr_ptr = nullptr;

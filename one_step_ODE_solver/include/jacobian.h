@@ -23,7 +23,7 @@ public:
         F_{F}
     {}
 
-    virtual jcb::real_matr_t get_matrix(const jcb::real_vec_t& values) = 0;
+    virtual jcb::real_matr_t get_matrix(const jcb::real_vec_t& values) const = 0;
     virtual ~Jacobian_representation() noexcept {};
 protected:
     jcb::system_t F_;
@@ -34,7 +34,7 @@ class Jacobian_simple : public Jacobian_representation
 {
     using Jacobian_representation::Jacobian_representation;
 
-    virtual jcb::real_matr_t get_matrix(const jcb::real_vec_t& values) override
+    virtual jcb::real_matr_t get_matrix(const jcb::real_vec_t& values) const override
     {
         std::size_t N = F_.size();
         jcb::real_matr_t output;
@@ -55,7 +55,7 @@ public:
         repr_ptr{new JACOBIAN{F}}
     {}
 
-    Jacobian_representation* repr_ptr;
+    Jacobian_representation* repr_ptr = nullptr;
     ~Jacobian() noexcept;
 };
 
