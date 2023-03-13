@@ -4,6 +4,11 @@
 #include <complex>
 #include <vector>
 
+namespace opr
+{
+    using real_vec_t = std::vector<double>;
+}
+
 template <typename T>
 T operator+(const T& lhs, const T& rhs);
 
