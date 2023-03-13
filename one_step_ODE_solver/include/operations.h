@@ -2,32 +2,25 @@
 #define OPERATIONS_H_INCLUDED
 
 #include <complex>
+#include <cmath>
+#include <iostream>
 #include <vector>
 
-template <typename T>
-T operator+(const T& lhs, const T& rhs);
-
-template <typename T>
-T operator-=(T& lhs, const T& rhs);
-
-template <typename T>
-T operator*(const double lhs, const T& rhs);
-
-template <typename T>
-std::vector<T> operator*(const double lhs, const std::vector<T>& rhs);
-
-template <typename T>
-std::vector<T>& operator-=(std::vector<T>& lhs, const std::vector<T>& rhs);
-
-template <typename T>
-std::vector<T> linear_comb(const std::vector<T>& lhs, const std::vector<T>& rhs);
+namespace opr
+{
+    using real_vec_t = std::vector<double>;
+    using real_matr_t = std::vector<real_vec_t>;
+    using complex_t = std::complex<double>;
+    using complex_vec_t = std::vector<complex_t>;
+    using complex_matr_t = std::vector<complex_vec_t>;
+}
 
 template <typename T>
 T operator+(const T& lhs, const T& rhs)
 {
     T result;
 
-    for (std::size_t i = 0; i < rhs.size(); ++i) {
+    for (std::size_t i = 0; i < lhs.size(); ++i) {
         result.push_back(lhs[i] + rhs[i]);
     }
 
@@ -35,7 +28,29 @@ T operator+(const T& lhs, const T& rhs)
 }
 
 template <typename T>
-T operator-=(T& lhs, const T& rhs)
+T& operator+=(T& lhs, const T& rhs)
+{
+    for (std::size_t i = 0; i < lhs.size(); ++i) {
+        lhs[i] += rhs[i];
+    }
+
+    return lhs;
+}
+
+template <typename T>
+T operator-(const T& lhs, const T& rhs)
+{
+    T result;
+
+    for (std::size_t i = 0; i < lhs.size(); ++i) {
+        result.push_back(lhs[i] - rhs[i]);
+    }
+
+    return result;
+}
+
+template <typename T>
+T& operator-=(T& lhs, const T& rhs)
 {
     for (std::size_t i = 0; i < lhs.size(); ++i) {
         lhs[i] -= rhs[i];
@@ -45,9 +60,9 @@ T operator-=(T& lhs, const T& rhs)
 }
 
 template <typename T>
-T operator*(const double lhs, const T& rhs)
+opr::real_vec_t operator*(const double lhs, const std::vector<T>& rhs)
 {
-    T result;
+    std::vector<double> result;
 
     for (std::size_t i = 0; i < rhs.size(); ++i) {
         result.push_back(lhs * rhs[i]);
@@ -57,27 +72,16 @@ T operator*(const double lhs, const T& rhs)
 }
 
 template <typename T>
-std::vector<T> operator*(const double lhs, const std::vector<T>& rhs)
+opr::complex_vec_t operator*(const opr::complex_t lhs, const std::vector<T>& rhs)
 {
-    std::vector<T> result;
+    std::vector<opr::complex_t> result;
 
-    for (auto& row : rhs) {
-        result.push_back(lhs * row);
+    for (std::size_t i = 0; i < rhs.size(); ++i) {
+        result.push_back(lhs * rhs[i]);
     }
 
     return result;
 }
-
-template <typename T>
-std::vector<T>& operator-=(std::vector<T>& lhs, const std::vector<T>& rhs)
-{
-    for (std::size_t i = 0; i < lhs.size(); ++i) {
-        lhs[i] -= rhs[i];
-    }
-
-    return lhs;
-}
-
 
 template <typename T>
 std::vector<T> linear_comb(const std::vector<T>& coeffs, const std::vector<T>& vectors)
@@ -95,5 +99,10 @@ std::vector<T> linear_comb(const std::vector<T>& coeffs, const std::vector<T>& v
 
     return result;
 }
+
+double norm(const opr::real_vec_t& vec);
+
+opr::real_vec_t real(const opr::complex_vec_t& vec);
+
 
 #endif // OPERATIONS_H_INCLUDED

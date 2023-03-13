@@ -7,10 +7,10 @@
 	<vector>
 	<set>
 
-1678370428 source:d:\omsu\programming\emp\one_step_ode_solver\src\one_step_ode_solver.cpp
+1678720694 source:d:\omsu\programming\emp\one_step_ode_solver\src\one_step_ode_solver.cpp
 	"one_step_ODE_solver.h"
 
-1678371634 d:\omsu\programming\emp\one_step_ode_solver\include\one_step_ode_solver.h
+1678720524 d:\omsu\programming\emp\one_step_ode_solver\include\one_step_ode_solver.h
 	<complex>
 	<functional>
 	<iostream>
@@ -21,39 +21,48 @@
 	"SLAE_solver.h"
 	<utility>
 
-1678370535 source:d:\omsu\programming\emp\one_step_ode_solver\main.cpp
+1678720366 source:d:\omsu\programming\emp\one_step_ode_solver\main.cpp
 	"one_step_ODE_solver.h"
 	<iostream>
 	<functional>
 	<vector>
 	<set>
 	<utility>
+	"SLAE_solver.h"
 
-1678371381 d:\omsu\programming\emp\one_step_ode_solver\include\snae_solver.h
+1678709824 d:\omsu\programming\emp\one_step_ode_solver\include\snae_solver.h
 	<functional>
+	"jacobian.h"
+	<iostream>
+	"operations.h"
+	"SLAE_solver.h"
+	<vector>
+
+1678698783 source:d:\omsu\programming\emp\one_step_ode_solver\src\snae_solver.cpp
+	"SNAE_solver.h"
+
+1678716456 d:\omsu\programming\emp\one_step_ode_solver\include\operations.h
+	<complex>
+	<cmath>
 	<iostream>
 	<vector>
 
-1678366874 source:d:\omsu\programming\emp\one_step_ode_solver\src\snae_solver.cpp
-	"SNAE_solver.h"
-
-1678368198 d:\omsu\programming\emp\one_step_ode_solver\include\operations.h
-	<complex>
-	<vector>
-
-1678100646 source:d:\omsu\programming\emp\one_step_ode_solver\src\operations.cpp
+1678716456 source:d:\omsu\programming\emp\one_step_ode_solver\src\operations.cpp
 	"operations.h"
 
-1678371418 d:\omsu\programming\emp\one_step_ode_solver\include\slae_solver.h
+1678717172 d:\omsu\programming\emp\one_step_ode_solver\include\slae_solver.h
+	<cmath>
+	<stdexcept>
 	<vector>
 
-1678366961 source:d:\omsu\programming\emp\one_step_ode_solver\src\slae_solver.cpp
+1678709229 source:d:\omsu\programming\emp\one_step_ode_solver\src\slae_solver.cpp
 	"SLAE_solver.h"
 
-1678296698 source:d:\omsu\programming\emp\one_step_ode_solver\src\jacobian.cpp
+1678692806 source:d:\omsu\programming\emp\one_step_ode_solver\src\jacobian.cpp
 	"jacobian.h"
 
-1678371454 d:\omsu\programming\emp\one_step_ode_solver\include\jacobian.h
+1678682717 d:\omsu\programming\emp\one_step_ode_solver\include\jacobian.h
 	<functional>
+	<iostream>
 	<vector>
 

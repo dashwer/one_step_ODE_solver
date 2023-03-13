@@ -43,10 +43,7 @@
 		<Unit filename="src/SNAE_solver.cpp" />
 		<Unit filename="src/jacobian.cpp" />
 		<Unit filename="src/one_step_ODE_solver.cpp" />
-		<Extensions>
-			<code_completion />
-			<envvars />
-			<debugger />
-		</Extensions>
+		<Unit filename="src/operations.cpp" />
+		<Extensions />
 	</Project>
 </CodeBlocks_project_file>

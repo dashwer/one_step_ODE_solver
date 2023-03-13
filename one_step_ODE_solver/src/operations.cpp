@@ -1,23 +1,23 @@
 #include "operations.h"
 
-opr::real_vec_t operator+(const opr::real_vec_t& lhs, const opr::real_vec_t& rhs)
+double norm(const opr::real_vec_t& vec)
 {
-    opr::real_vec_t result;
-
-    for (std::size_t i = 0; i < rhs.size(); ++i) {
-        result.push_back(lhs[i] + rhs[i]);
+    double result = 0.0;
+    for (const auto& elem : vec) {
+        if (result < fabs(elem)) {
+            result = fabs(elem);
+        }
     }
 
     return result;
 }
 
-
-opr::real_vec_t operator*(const double lhs, const opr::real_vec_t& rhs)
+opr::real_vec_t real(const opr::complex_vec_t& vec)
 {
     opr::real_vec_t result;
 
-    for (std::size_t i = 0; i < rhs.size(); ++i) {
-        result.push_back(lhs * rhs[i]);
+    for (const auto& elem : vec) {
+        result.push_back(elem.real());
     }
 
     return result;

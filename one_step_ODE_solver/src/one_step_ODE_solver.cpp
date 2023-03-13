@@ -1,40 +1,7 @@
 #include "one_step_ODE_solver.h"
 
-One_step_ODE_solver::~One_step_ODE_solver() noexcept
-{
-    if (repr_ptr != nullptr) {
-        delete repr_ptr;
-        repr_ptr = nullptr;
-    }
-}
-
-
-One_step_ODE_solver_repr::~One_step_ODE_solver_repr()
-{
-    if (coeffs_ptr_ != nullptr) {
-        delete coeffs_ptr_;
-        coeffs_ptr_ = nullptr;
-    }
-
-    if (SNAE_solver_ptr_ != nullptr) {
-        delete SNAE_solver_ptr_;
-        SNAE_solver_ptr_ = nullptr;
-    }
-
-    if (SLAE_solver_ptr_ != nullptr) {
-        delete SLAE_solver_ptr_;
-        SLAE_solver_ptr_ = nullptr;
-    }
-
-    if (jacobian_ptr_ != nullptr) {
-        delete jacobian_ptr_;
-        jacobian_ptr_ = nullptr;
-    }
-}
-
-
 Runge_Kutta_solver::Runge_Kutta_solver(const svr::system_t& F, svr::domain_t domain, const svr::real_vec_t& u0) :
-    One_step_ODE_solver_repr::One_step_ODE_solver_repr(F, domain, u0)
+    One_step_ODE_solver_representation::One_step_ODE_solver_representation(F, domain, u0)
 {
     coeffs_ptr_ = new Runge_Kutta_method;
     Runge_Kutta_method* coeffs_ptr = dynamic_cast<Runge_Kutta_method*>(coeffs_ptr_);
@@ -44,6 +11,8 @@ Runge_Kutta_solver::Runge_Kutta_solver(const svr::system_t& F, svr::domain_t dom
 
     coeffs_ptr->b = {3.0/4.0, 1.0/4.0};
     coeffs_ptr->c = {1.0/3.0, 1.0};
+
+    coeffs_ptr = nullptr;
 }
 
 
@@ -67,7 +36,7 @@ svr::real_matr_t Runge_Kutta_solver::get_solution() const
         for (std::size_t i = 0; i < s; ++i) {
             for (std::size_t j = 0; j < N; ++j) {
 
-                auto f_elem = [&](const svr::real_vec_t& k)
+                auto f_elem = [=, &coeffs_ptr](const svr::real_vec_t& k)
                 {
                     svr::real_vec_t args = {t_n + coeffs_ptr->c[i] * tau};
                     svr::real_vec_t a_k = linear_comb(coeffs_ptr->A[i], k);
@@ -80,7 +49,7 @@ svr::real_matr_t Runge_Kutta_solver::get_solution() const
                     return F_[j](args) - k[i*s + j];
                 };
 
-                f.push_back(f_elem);
+                f.emplace_back(f_elem);
             }
         }
 
@@ -90,18 +59,19 @@ svr::real_matr_t Runge_Kutta_solver::get_solution() const
         svr::real_vec_t b_k = linear_comb(coeffs_ptr->b, k);
         U[n+1] = U[n] + tau * b_k;
     }
+    coeffs_ptr = nullptr;
 
     return U;
 }
 
 
 Rosenbrock_one_stage_solver::Rosenbrock_one_stage_solver(const svr::system_t& F, svr::domain_t domain, const svr::real_vec_t& u0) :
-    One_step_ODE_solver_repr::One_step_ODE_solver_repr(F, domain, u0)
+    One_step_ODE_solver_representation::One_step_ODE_solver_representation(F, domain, u0)
 {
     coeffs_ptr_ = new Rosenbrock_one_stage_method;
     Rosenbrock_one_stage_method* coeffs_ptr = dynamic_cast<Rosenbrock_one_stage_method*>(coeffs_ptr_);
 
-    coeffs_ptr->alpha = 0.5;
+    coeffs_ptr->alpha = svr::complex_t(0.5, 0.5);
 }
 
 svr::real_matr_t Rosenbrock_one_stage_solver::get_solution() const
@@ -114,24 +84,25 @@ svr::real_matr_t Rosenbrock_one_stage_solver::get_solution() const
     U.resize(svr::start_steps_amount);
     U[0] = u0_;
     const std::size_t N = u0_.size();
+    jacobian_ptr_->repr_ptr->initialize(F_);
 
     for (std::size_t n = 0; n < svr::start_steps_amount; ++n) {
         svr::real_matr_t J = jacobian_ptr_->repr_ptr->get_matrix(U[n]);
-        svr::real_matr_t A;
+        svr::complex_matr_t A;
         A.resize(N);
-        svr::real_vec_t b;
+        svr::complex_vec_t b;
 
         for (std::size_t i = 0; i < N; ++i) {
-            A[i].resize(N, 0.0);
+            A[i].resize(N, svr::complex_t(0.0, 0.0));
             A[i][i] = 1.0;
             A[i] -= coeffs_ptr->alpha * tau * J[i];
             b.push_back(F_[i](U[n]));
         }
 
         SLAE_solver_ptr_->repr_ptr->initialize(A, b);
-        svr::real_vec_t k = SLAE_solver_ptr_->repr_ptr->get_solution();
+        svr::complex_vec_t k = SLAE_solver_ptr_->repr_ptr->get_solution();
 
-        U[n+1] = U[n] + tau * k;
+        U[n+1] = U[n] + tau * real(k);
     }
 
     return U;
@@ -139,17 +110,17 @@ svr::real_matr_t Rosenbrock_one_stage_solver::get_solution() const
 
 
 Rosenbrock_two_stage_solver::Rosenbrock_two_stage_solver(const svr::system_t& F, svr::domain_t domain, const svr::real_vec_t& u0) :
-    One_step_ODE_solver_repr::One_step_ODE_solver_repr(F, domain, u0)
+    One_step_ODE_solver_representation::One_step_ODE_solver_representation(F, domain, u0)
 {
     coeffs_ptr_ = new Rosenbrock_two_stage_method;
     Rosenbrock_two_stage_method* coeffs_ptr = dynamic_cast<Rosenbrock_two_stage_method*>(coeffs_ptr_);
 
-    coeffs_ptr->alpha_1 = 0.5;
-    coeffs_ptr->alpha_2 = 0.5;
-    coeffs_ptr->b1 = 0.5;
-    coeffs_ptr->b2 = 0.5;
-    coeffs_ptr->a_21 = 0.5;
-    coeffs_ptr->c_21 = 0.5;
+    coeffs_ptr->alpha_1 = svr::complex_t(1.0/6.0, 1.0/6.0);
+    coeffs_ptr->alpha_2 = 0.25;
+    coeffs_ptr->b1 = svr::complex_t(23.0/39.0, -2.0/39.0);
+    coeffs_ptr->b2 = 16.0/39.0;
+    coeffs_ptr->a_21 = svr::complex_t(0.5, -0.875);
+    coeffs_ptr->c_21 = svr::complex_t(0.75, -11.0/48.0);
 }
 
 svr::real_matr_t Rosenbrock_two_stage_solver::get_solution() const
@@ -162,12 +133,13 @@ svr::real_matr_t Rosenbrock_two_stage_solver::get_solution() const
     U.resize(svr::start_steps_amount);
     U[0] = u0_;
     const std::size_t N = u0_.size();
+    jacobian_ptr_->repr_ptr->initialize(F_);
 
     for (std::size_t n = 0; n < svr::start_steps_amount; ++n) {
         svr::real_matr_t J = jacobian_ptr_->repr_ptr->get_matrix(U[n]);
-        svr::real_matr_t A;
+        svr::complex_matr_t A;
         A.resize(N);
-        svr::real_vec_t b;
+        svr::complex_vec_t b;
 
         for (std::size_t i = 0; i < N; ++i) {
             A[i].resize(N, 0.0);
@@ -177,9 +149,9 @@ svr::real_matr_t Rosenbrock_two_stage_solver::get_solution() const
         }
 
         SLAE_solver_ptr_->repr_ptr->initialize(A, b);
-        svr::real_vec_t k1 = SLAE_solver_ptr_->repr_ptr->get_solution();
+        svr::complex_vec_t k1 = SLAE_solver_ptr_->repr_ptr->get_solution();
 
-        J = jacobian_ptr_->repr_ptr->get_matrix(U[n] + tau * coeffs_ptr->a_21 * k1);
+        J = jacobian_ptr_->repr_ptr->get_matrix(U[n] + tau * real(coeffs_ptr->a_21 * k1));
         A.resize(N);
         b.clear();
 
@@ -187,14 +159,23 @@ svr::real_matr_t Rosenbrock_two_stage_solver::get_solution() const
             A[i].resize(N, 0.0);
             A[i][i] = 1.0;
             A[i] -= coeffs_ptr->alpha_2 * tau * J[i];
-            b.push_back(F_[i](U[n] + tau * coeffs_ptr->c_21 * k1));
+            b.push_back(F_[i](U[n] + tau * real(coeffs_ptr->c_21 * k1)));
         }
 
         SLAE_solver_ptr_->repr_ptr->initialize(A, b);
-        svr::real_vec_t k2 = SLAE_solver_ptr_->repr_ptr->get_solution();
+        svr::complex_vec_t k2 = SLAE_solver_ptr_->repr_ptr->get_solution();
 
-        U[n+1] = U[n] + tau * (coeffs_ptr->b1 * k1 + coeffs_ptr->b2 * k2);
+        U[n+1] = U[n] + tau * real(coeffs_ptr->b1 * k1 + coeffs_ptr->b2 * k2);
     }
 
     return U;
+}
+
+
+One_step_ODE_solver::~One_step_ODE_solver()
+{
+    if (repr_ptr != nullptr) {
+        delete repr_ptr;
+        repr_ptr = nullptr;
+    }
 }
